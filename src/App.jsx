@@ -1,45 +1,81 @@
 import React from "react";
 
-export default function App() {
-  console.log("render App");
+export default function App(){
+  const [count, setCount] = React.useState(10);
 
-  const [count1, setCount1] = React.useState(0);
-  const [count2, setCount2] = React.useState(0);
+  const prevCountRef = React.useRef(0)
 
-  const double = (count) => {
-    let i = 0;
-    while (i < 1000000000) i++;
-    return count * 2;
-  };
-  
-  const Counter= React.useMemo(()=>{
-    console.log("render Counter")
-    const doubledCount = double(count2);
+  const isInitialRender = React.useRef(true)
 
-    return (
-      <p>
-        Counter: {count2},{doubledCount}
-      </p>
-    )
-  },[count2])
+  const inputEl = React.useRef(null)
 
-  // const doubledCount = React.useMemo(() => double(count2), [count2]);
+  const onClick = ()=>{
+    if(!inputEl.current) return;
+    console.log(inputEl.current)
+    inputEl.current.focus();
+  }
+
+  React.useEffect(()=>{
+    prevCountRef.current = count
+    if(isInitialRender.current) isInitialRender.current = false
+  })
 
   return (
     <>
-      <h2>Increment(fast)</h2>
-      <p>Counter: {count1}</p>
-      <button onClick={() => setCount1(count1 + 1)}>Increment(fast)</button>
-
-      <h2>Increment(slow)</h2>
-      {Counter}
-      {/* <p>
-        Counter: {count2}, {doubledCount}
-      </p> */}
-      <button onClick={() => setCount2(count2 + 1)}>Increment(slow)</button>
+      <p>{isInitialRender.current?"初回レンダー":"再レンダー"}</p>
+      <p>
+        現在のcount: {count} 前回のcount: {prevCountRef.current}
+      </p>
+      <p>
+        前回のcountより{prevCountRef.current > count ? "小さい" : "大きい"}
+      </p>
+      <button onClick={()=>setCount(Math.floor(Math.random()*11))}>update</button><br/>
+      <input type="text" ref={inputEl} /><br/>
+      <button onClick={onClick}>要素をフォーカスする</button>
     </>
-  );
+  )
 }
+
+// export default function App() {
+//   console.log("render App");
+
+//   const [count1, setCount1] = React.useState(0);
+//   const [count2, setCount2] = React.useState(0);
+
+//   const double = (count) => {
+//     let i = 0;
+//     while (i < 1000000000) i++;
+//     return count * 2;
+//   };
+  
+//   const Counter= React.useMemo(()=>{
+//     console.log("render Counter")
+//     const doubledCount = double(count2);
+
+//     return (
+//       <p>
+//         Counter: {count2},{doubledCount}
+//       </p>
+//     )
+//   },[count2])
+
+//   // const doubledCount = React.useMemo(() => double(count2), [count2]);
+
+//   return (
+//     <>
+//       <h2>Increment(fast)</h2>
+//       <p>Counter: {count1}</p>
+//       <button onClick={() => setCount1(count1 + 1)}>Increment(fast)</button>
+
+//       <h2>Increment(slow)</h2>
+//       {Counter}
+//       {/* <p>
+//         Counter: {count2}, {doubledCount}
+//       </p> */}
+//       <button onClick={() => setCount2(count2 + 1)}>Increment(slow)</button>
+//     </>
+//   );
+// }
 
 // // useCallbackの使い方
 // import React from "react";
